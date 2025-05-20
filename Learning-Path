@@ -1,0 +1,179 @@
+Essestial topics of AWS for Devops Engineer:
+============================================
+
+1) VPC,Subnet,route tables, internet gateway,NAT gateway ( Networking )
+
+2) build servers
+EC-2, ( Creating servers )
+On top of servers creating web application,
+Load balancing, 
+autoscaling, 
+security groups
+
+3) Storage
+S3
+
+4) RDBMS Databases
+Amazon RDS to create below DBs
+ 
+Mysql
+Postgres
+SQL server
+Oralce
+Aurora
+MariaDB
+====================================================================================================
+5) IAM ( Identity Access Management ) == 
+Rakesh Taniki == https://www.youtube.com/watch?v=w34M3-c5AcQ&list=PLCo6vu1MhylZBz4Ys7MbY4igdavuvuFuN&index=7
+
+RK - Done
+
+1) IAM User  2) IAM Role
+
+1) IAM User:
+#############
+==> Access on resources is provided via Policies (same in OCI)
+==> 2 types of policies AWS managed and Customer Managed ( same in OCI )
+==> Further the accee is devided into two type "Full access" and "Read Only Access"
+==> Customer Manged accesses are operation based fine grain access. i.e which "user" can do "what" on which "resource"
+==> All policies are in json format ( same in OCI )
+==> Customer Managed Policies are written by customer manually ( same in OCI )
+==> can create groups and add users into group to ease the user management ( same in OCI )
+==> We can further assign policies on groups.
+
+Creating Keys for users to login from command prompt:
+
+A user having IAM full access or create use keys policies can create user keys for a login which generates keys and using that keys user can login from cmd.
+
+User needs to download and install cli tool enables you to connect to aws using this key
+
+use "aws configure" to configure give keys,region then you login to aws.
+>aws configure
+>aws sts get-caller-identity
+
+C:\Users\rvijayagiri>aws sts get-caller-identity
+{
+    "UserId": "AIDAXRGPDZSRAY7M63GM5",
+    "Account": "517977918626",
+    "Arn": "arn:aws:iam::517977918626:user/TESTUSER"
+}
+
+Adding policies:
+You can add the AWS defined policies to the user, there are multiple organised policies but if you still want to fine grain, you can create your own customised policy. You will get two tabs while creating User Managed policies one dropdown and choose, other tab is to enter json code. When you need json code you can di your selection and check the code and use it automations like terraform.
+
+2) IAM Roles:
+##############
+
+
+Create Roles
+Cross Account ROles
+Switch Roles
+
+IAM --> Roles
+You can see 2 default roles "AWSServiceRoleForSupport" and "AWSServiceRoleForTrustedAdvisor"
+Roles are two types:
+1) Service Based ROles ( AWS Service)
+2) Account Based Roles.( AWS Account )
+
+
+Step-by-Step: Enable Cross-Account Login in AWS:
+
+Account A (Target): Where the user wants to log in == vrk019780
+Account B (Source): Where the user exists and will switch roles from == TESTUSER
+
+Step 1: Create an IAM Role in Account A (Target Account)
+Go to IAM > Roles in Account vrk019780. ( vrk019780 )
+Click "Create role". (  )
+Choose Another AWS account.
+Enter Account TESTUSER’s Account ID 
+(Optional) Check "Require external ID" or "Require MFA" if needed.
+Click Next.
+Attach Policies (Permissions)
+Attach the permission policies you want this role to have in Account (S3 bucket full access)
+Name the role (ACCESS-FOR-TESTUSER).
+Click Create Role.
+
+Step 2: Note Down the Role ARN
+After creating the role, copy its ARN, arn:aws:iam::517977918626:role/ACCESS-FOR-TESTUSER
+
+Step 3: Create IAM Policy in Account TESTUSER (Source Account)
+Attach a policy to the user (or group) in Account TESTUSER so they can assume the role from Account vrk019780.
+Go to IAM > Users > Select user TESTUSER
+Click Add permissions > Add inline policy.
+Choose JSON, paste the below code
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "arn:aws:iam::517977918626:role/ACCESS-FOR-TESTUSER"
+    }
+  ]
+}
+
+
+Click Review Policy, name it TESTUSER_POLICY, and create it.
+
+Step 4: Login to the user and assume role to access the content in target aws account
+
+Console:
+Log in to Account B
+
+Click on the account name (top right) → Switch Role
+
+Enter:
+
+Account ID: of Account A
+
+Role name: CrossAccountAccessRole
+
+Display name and color
+
+Permission Boundary: ( Added security on Priveleges )
+
+If you create and assign a permission Boundary, Even though user have full permissions, the boundary limits the access inside the boundary only. This is next level layer of security.
+
+
+====================================================================================================
+
+6) CI/CD
+      6.1) Code Commit ( CI/CD ) similar to github. 
+	  6.2) Code build 
+	  6.3) Code Deploy 
+	  6.4) Code Pipeline
+
+7) Route 53 -- DNS service
+
+9) Database Service 
+RDS - 4th Point
+dynamodb,
+elasticashe -- In memory database
+
+10) Infrastucture as code services 
+
+CloudFormation (IaC),
+Terraform
+
+11) COntainer Services
+ 
+ECR - Elastic COntainer Registry - similar to docur hub
+ECS - Elastic Container Service - 
+EKS - Elastic Kubernetes Service
+
+12)  Monitoring Services.
+
+Cloudwatch cpu usage, memory usage etc..
+CloudTrial Audit and monitor AWS services
+
+13) Automation Services 
+
+Lamda - Automate workload
+system manager - patching, software deployment automation.
+Elastic Beanstalk -- automate deployment of applications.
+
+14) Security Services 
+
+KMS - Key management Service.
+Secret Manager - save passwords,keys, rotation etc..
